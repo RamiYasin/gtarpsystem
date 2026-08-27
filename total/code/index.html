@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام فرز الرتب</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #0b0f14;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background: #111820;
+            border: 1px solid #26313d;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 15px 50px rgba(0,0,0,.4);
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8f9baa;
+            margin-bottom: 25px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: #cbd5df;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: #0b1016;
+            border: 1px solid #2b3744;
+            border-radius: 10px;
+            color: white;
+            padding: 13px;
+            outline: none;
+            font-size: 15px;
+            transition: .2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #5c8dff;
+            box-shadow: 0 0 0 3px rgba(92,141,255,.1);
+        }
+
+        textarea {
+            min-height: 220px;
+            resize: vertical;
+            direction: ltr;
+            text-align: left;
+            font-family: Consolas, monospace;
+            line-height: 1.7;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 13px 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .sort-btn {
+            background: #3d73ff;
+            color: white;
+        }
+
+        .sort-btn:hover {
+            background: #2d60df;
+            transform: translateY(-1px);
+        }
+
+        .copy-btn {
+            background: #1d2935;
+            color: white;
+            border: 1px solid #344352;
+        }
+
+        .copy-btn:hover {
+            background: #263542;
+        }
+
+        .clear-btn {
+            background: #29171a;
+            color: #ff7b83;
+            border: 1px solid #52252b;
+        }
+
+        .clear-btn:hover {
+            background: #3a1d21;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        .result-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .status {
+            color: #7f8b98;
+            font-size: 13px;
+        }
+
+        .example {
+            margin-top: 20px;
+            background: #0b1016;
+            border: 1px solid #202b36;
+            border-radius: 10px;
+            padding: 15px;
+            color: #8794a2;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .example code {
+            color: #b9c8ff;
+        }
+
+        @media (max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>⚓ نظام فرز الرتب</h1>
+    <div class="subtitle">
+        قم بإضافة الأسماء، اختر الرتبة، ثم حدد كود البداية
+    </div>
+
+    <div class="grid">
+
+        <div class="field">
+            <label>الرتبة</label>
+
+            <select id="rank">
+                <option value="جندي تحت التدريب">جندي تحت التدريب</option>
+                <option value="جندي">جندي</option>
+                <option value="جندي أول">جندي أول</option>
+                <option value="عريف">عريف</option>
+                <option value="وكيل رقيب">وكيل رقيب</option>
+                <option value="رقيب">رقيب</option>
+                <option value="رقيب أول">رقيب أول</option>
+                <option value="رئيس رقباء">رئيس رقباء</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>كود البداية</label>
+            <input
+                id="startCode"
+                type="text"
+                value="Y-0"
+                placeholder="مثال: Y-36"
+            >
+        </div>
+
+        <div class="field full">
+            <label>الأسماء</label>
+
+            <textarea
+                id="names"
+                placeholder="ضع كل اسم في سطر مستقل...
+
+مثال:
+AHMED
+<@623100636275277834>
+<@1149471137280282624>"
+            ></textarea>
+        </div>
+
+    </div>
+
+    <div class="buttons">
+        <button class="sort-btn" onclick="sortNames()">
+            ⚡ فرز الأسماء
+        </button>
+
+        <button class="copy-btn" onclick="copyResult()">
+            📋 نسخ النتيجة
+        </button>
+
+        <button class="clear-btn" onclick="clearAll()">
+            🗑️ مسح
+        </button>
+    </div>
+
+    <div class="result">
+
+        <div class="result-title">
+            <label>النتيجة</label>
+            <span class="status" id="status">جاهز</span>
+        </div>
+
+        <textarea
+            id="result"
+            readonly
+            placeholder="ستظهر النتيجة هنا..."
+        ></textarea>
+
+    </div>
+
+    <div class="example">
+        <strong>طريقة الاستخدام:</strong><br>
+        اكتب كل اسم في سطر مستقل، ثم اختر الرتبة وكود البداية.
+        <br><br>
+        مثال كود البداية:
+        <code>Y-36</code>
+        <br>
+        سيصبح الترتيب:
+        <code>Y-36 → Y-37 → Y-38 → Y-39 ...</code>
+    </div>
+
+</div>
+
+
+<script>
+
+    function parseCode(code) {
+
+        code = code.trim();
+
+        /*
+            يبحث عن آخر رقم في الكود.
+
+            Y-36  → prefix = Y- / number = 36
+            A-100 → prefix = A- / number = 100
+            TEST5 → prefix = TEST / number = 5
+        */
+
+        const match = code.match(/^(.*?)(\d+)$/);
+
+        if (!match) {
+            return null;
+        }
+
+        return {
+            prefix: match[1],
+            number: parseInt(match[2], 10)
+        };
+    }
+
+
+    function getRankHeader(rank) {
+
+        return `『 ⭐⚓️                ${rank}                   ⚓️⭐ 』`;
+
+    }
+
+
+    function sortNames() {
+
+        const rank = document.getElementById("rank").value;
+
+        const startCode =
+            document.getElementById("startCode").value.trim(" ");
+
+        const namesText =
+            document.getElementById("names").value;
+
+        const resultBox =
+            document.getElementById("result");
+
+        const status =
+            document.getElementById("status");
+
+
+        if (!startCode) {
+
+            alert("يرجى كتابة كود البداية.");
+
+            return;
+        }
+
+
+        const parsedCode = parseCode(startCode);
+
+        if (!parsedCode) {
+
+            alert(
+                "صيغة الكود غير صحيحة.\n\n" +
+                "استخدم مثلاً:\n" +
+                "Y-0\n" +
+                "Y-36\n" +
+                "A-100"
+            );
+
+            return;
+        }
+
+
+        const names = namesText
+            .split(/\r?\n/)
+            .map(name => name.trim())
+            .filter(name => name !== "");
+
+
+        if (names.length === 0) {
+
+            alert("يرجى إضافة اسم واحد على الأقل.");
+
+            return;
+        }
+
+
+        let output = "";
+
+        /*
+            عنوان الرتبة
+        */
+
+        output += getRankHeader(rank);
+
+        output += "\n\n";
+
+
+        /*
+            إنشاء الأكواد والأسماء
+        */
+
+        names.forEach((name, index) => {
+
+            const currentNumber =
+                parsedCode.number + index;
+
+            const currentCode =
+                parsedCode.prefix + currentNumber;
+
+            output +=
+                `[${currentCode}] ➤ ${name}`;
+
+            if (index < names.length - 1) {
+                output += "\n";
+            }
+
+        });
+
+
+        resultBox.value = output;
+
+        status.textContent =
+            `تم فرز ${names.length} اسم`;
+    }
+
+
+    async function copyResult() {
+
+        const result =
+            document.getElementById("result").value;
+
+        const status =
+            document.getElementById("status");
+
+
+        if (!result.trim()) {
+
+            alert("لا توجد نتيجة لنسخها.");
+
+            return;
+        }
+
+
+        try {
+
+            await navigator.clipboard.writeText(result);
+
+            status.textContent = "✓ تم نسخ النتيجة";
+
+            setTimeout(() => {
+                status.textContent = "جاهز";
+            }, 2000);
+
+        } catch (error) {
+
+            /*
+                حل بديل للمتصفحات التي تمنع Clipboard API
+            */
+
+            const textarea =
+                document.getElementById("result");
+
+            textarea.select();
+
+            document.execCommand("copy");
+
+            status.textContent = "✓ تم النسخ";
+        }
+    }
+
+
+    function clearAll() {
+
+        document.getElementById("names").value = "";
+
+        document.getElementById("result").value = "";
+
+        document.getElementById("startCode").value = "Y-0";
+
+        document.getElementById("status").textContent = "جاهز";
+    }
+
+
+    /*
+        Ctrl + Enter = فرز
+    */
+
+    document
+        .getElementById("names")
+        .addEventListener("keydown", function(event) {
+
+            if (event.ctrlKey && event.key === "Enter") {
+
+                sortNames();
+
+            }
+
+        });
+
+</script>
+
+</body>
+</html>

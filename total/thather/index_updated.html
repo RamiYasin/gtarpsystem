@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام الجرد الميداني</title>
+<link rel="stylesheet" href="style_updated.css">
+</head>
+<body>
+<div class="container">
+<header>
+<h1>نظام الجرد الميداني</h1>
+<p>تحديث عدادات أسماء الديسكورد ونقل من يصل إلى 3 إلى المحاسبين</p>
+</header>
+
+<main class="cards">
+<section class="card">
+<h2>📋 القائمة القديمة</h2>
+<p>اكتب الاسم بهذا الشكل: <b>ahmed=1</b> — كل اسم في سطر.</p>
+<textarea id="oldList" placeholder="ahmed=1
+mohammed=5
+ali=2"></textarea>
+</section>
+
+<section class="card">
+<h2>🆕 القائمة الجديدة</h2>
+<p>أسماء الديسكورد فقط، كل اسم في سطر.</p>
+<textarea id="newList" placeholder="ahmed
+ali
+khaled
+ahmed"></textarea>
+</section>
+</main>
+
+<div class="actions">
+<button id="processBtn">⚡ معالجة القائمة</button>
+<button id="copyBtn" class="success">📋 نسخ النتيجة</button>
+<button id="copyAccountantsBtn" class="accountantsBtn">👤 نسخ المحاسبين</button>
+<button id="clearBtn" class="danger">🗑️ مسح الكل</button>
+</div>
+
+<div id="message" class="message"></div>
+
+<section class="result card">
+<div class="result-header">
+<h2>📊 القائمة بعد التحديث</h2>
+<div class="stats">
+<span>الأسماء: <b id="totalNames">0</b></span>
+<span>التحديثات: <b id="updatedNames">0</b></span>
+<span>الجديدة: <b id="newNames">0</b></span>
+<span>المحاسبين: <b id="accountantCount">0</b></span>
+</div>
+</div>
+<textarea id="result" readonly placeholder="ستظهر القائمة القديمة المحدثة هنا..."></textarea>
+</section>
+
+<section class="result card accountants">
+<div class="result-header">
+<h2>👤 المحاسبين</h2>
+<span class="hint">الأسماء التي وصلت إلى 3</span>
+</div>
+<textarea id="accountants" readonly placeholder="سيظهر هنا كل اسم يصل إلى 3..."></textarea>
+</section>
+
+<!-- قسم مستقل: جرد التحاذير -->
+<section class="warning-inventory card">
+<div class="section-title">
+<div>
+<h2>⚠️ جرد التحاذير</h2>
+<p>هذا القسم مستقل تماماً عن القائمة السابقة. أضف الأسماء الجديدة ثم اختر نوع التحذير لكل اسم.</p>
+</div>
+<div class="warning-values">
+<span>شفهي = <b>3</b></span><span>الأول = <b>5</b></span><span>الثاني = <b>7</b></span><span>الثالث = <b>10</b></span>
+</div>
+</div>
+<div class="warning-grid">
+<div>
+<label for="warningOldList">📋 قائمة جرد التحاذير الحالية</label>
+<p class="field-hint">اكتبها بالشكل: <b>ahmed=7</b> — كل اسم في سطر.</p>
+<textarea id="warningOldList" class="warning-textarea" placeholder="ahmed=7
+mohammed=10
+ali=3"></textarea>
+</div>
+<div>
+<label for="warningNewList">🆕 الأسماء الجديدة</label>
+<p class="field-hint">أضف الأسماء الجديدة، كل اسم في سطر.</p>
+<textarea id="warningNewList" class="warning-textarea" placeholder="ahmed
+khaled
+ali"></textarea>
+</div>
+</div>
+<div class="warning-actions">
+<button id="prepareWarningsBtn">🔎 توزيع الأسماء في جدول</button>
+<button id="applyWarningsBtn" class="success" disabled>✅ إضافة التحاذير</button>
+<button id="copyWarningsBtn" class="accountantsBtn">📋 نسخ جرد التحاذير</button>
+</div>
+<div id="warningMessage" class="message"></div>
+<div class="warning-table-wrap">
+<table id="warningTable">
+<thead><tr><th>الاسم</th><th>شفهي<br><small>+3</small></th><th>التحذير الأول<br><small>+5</small></th><th>التحذير الثاني<br><small>+7</small></th><th>التحذير الثالث<br><small>+10</small></th></tr></thead>
+<tbody id="warningTableBody"><tr><td colspan="5" class="empty-row">أضف أسماء جديدة ثم اضغط «توزيع الأسماء في جدول».</td></tr></tbody>
+</table>
+</div>
+<div class="warning-result">
+<div class="result-header"><h3>📊 جرد التحاذير بعد التحديث</h3><span class="hint">إذا كان الاسم موجوداً تُضاف القيمة إليه، وإذا لم يكن موجوداً يُضاف إلى القائمة.</span></div>
+<textarea id="warningResult" readonly placeholder="ستظهر هنا قائمة جرد التحاذير..."></textarea>
+</div>
+</section>
+</div>
+<script src="script_updated.js"></script>
+</body>
+</html>

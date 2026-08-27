@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بوابة الأنظمة</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 50px 0;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 5vw, 48px);
+    }
+
+    header p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 17px;
+    }
+
+    .systems {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 260px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 22px;
+      background: rgba(255,255,255,.07);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 15px 35px rgba(0,0,0,.2);
+      transition: .25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-7px);
+      background: rgba(255,255,255,.11);
+      box-shadow: 0 20px 45px rgba(0,0,0,.3);
+    }
+
+    .icon {
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      border-radius: 17px;
+      background: #2563eb;
+      font-size: 28px;
+      margin-bottom: 22px;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 23px;
+    }
+
+    .card p {
+      margin: 0 0 25px;
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+
+    .btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      background: #2563eb;
+      padding: 13px 18px;
+      border-radius: 12px;
+      font-weight: bold;
+      transition: .2s;
+    }
+
+    .btn:hover {
+      background: #1d4ed8;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 45px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    @media (max-width: 800px) {
+      .systems {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 35px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+    <header>
+        <h1>الشؤون الداخلية </h1>
+      <h1>بوابة الأنظمة</h1>
+      <p>اختر النظام الذي تريد الدخول إليه</p>
+    </header>
+
+    <section class="systems">
+
+      <article class="card">
+        <div>
+          <div class="icon">👥</div>
+          <h2>نظام الجرد الأفراد</h2>
+          <p>الدخول إلى نظام جرد الأفراد وإدارة بيانات الجرد.</p>
+        </div>
+        <a class="btn" href="afrad/index.html">دخول النظام</a>
+      </article>
+
+      <article class="card">
+        <div>
+          <div class="icon">⚠️</div>
+          <h2>نظام الجرد التحذير</h2>
+          <p>الدخول إلى نظام الجرد الخاص بالتحذير.</p>
+        </div>
+        <a class="btn" href="thather/index_updated.html">دخول النظام</a>
+      </article>
+
+      <article class="card">
+        <div>
+          <div class="icon">🔢</div>
+          <h2>نظام الفرز الأكواد</h2>
+          <p>الدخول إلى نظام فرز وإدارة الأكواد.</p>
+        </div>
+        <a class="btn" href="code/index.html">دخول النظام</a>
+      </article>
+
+    </section>
+
+    <footer>
+      جميع الحقوق محفوظة
+      by KARA 6262
+    </footer>
+
+  </main>
+</body>
+</html>
