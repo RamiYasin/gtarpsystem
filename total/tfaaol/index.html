@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discord Message Checker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">DEV BY KARA 6262</div>
+      <h1>نظام جرد تفاعل الشؤون الداخلية لحرس الحدود</h1>
+      <p>يقرأ استجابة JSON المحفوظة من نتائج Discord ويبحث عن رسائل مستخدم خلال فترة محددة.</p>
+    </div>
+    <div class="privacy">🔒 المعالجة محليًا داخل المتصفح</div>
+  </header>
+
+  <section class="card">
+    <h2>1) أدخل بيانات الاستجابة</h2>
+    <div class="tabs">
+      <button class="tab active" data-tab="file" type="button">رفع JSON</button>
+      <button class="tab" data-tab="paste" type="button">لصق JSON</button>
+    </div>
+
+    <div id="fileTab" class="tab-panel active">
+      <label class="drop">
+        <input id="jsonFile" type="file" accept=".json,application/json,text/plain">
+        <span class="drop-title">اختر ملف JSON</span>
+        <span class="drop-help">الملف يمكن أن يكون بنفس البنية التي أرسلتها: messages → [ [ message ], ... ]</span>
+      </label>
+    </div>
+
+    <div id="pasteTab" class="tab-panel">
+      <textarea id="jsonText" placeholder='الصق Response JSON هنا...'></textarea>
+    </div>
+
+    <div id="dataStatus" class="status">لم يتم تحميل بيانات بعد.</div>
+  </section>
+
+  <section class="card">
+    <h2>2) إعداد الفحص</h2>
+
+    <div class="grid">
+      <label>
+        رابط القناة أو Channel ID
+        <input id="channel" placeholder="https://discord.com/channels/SERVER/CHANNEL">
+      </label>
+
+      <label>
+        Usernames
+        <textarea id="users" class="small-area" placeholder="ضع كل Username في سطر منفصل"></textarea>
+      </label>
+    </div>
+
+    <div class="status">الفحص الآن لا يعتمد على الفترة الزمنية؛ سيتم البحث في جميع البيانات المحمّلة للقناة.</div>
+
+    <div class="actions">
+      <button id="check" class="primary" type="button">🔎 فحص</button>
+      <button id="clear" type="button">مسح</button>
+    </div>
+
+    <div id="checkStatus" class="status">جاهز.</div>
+  </section>
+
+  <section id="summaryCard" class="card" hidden>
+    <div class="summary-head">
+      <div>
+        <h2>النتيجة</h2>
+        <p id="summaryMeta"></p>
+      </div>
+      <button id="downloadCsv" type="button">⬇ تصدير CSV</button>
+    </div>
+
+    <div id="summaryBoxes" class="boxes"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>User ID</th>
+            <th>Global Name</th>
+            <th>النتيجة</th>
+            <th>عدد الرسائل</th>
+            <th>أول رسالة</th>
+            <th>آخر رسالة</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="messagesCard" class="card" hidden>
+    <h2>الرسائل المطابقة</h2>
+    <div id="messagesList"></div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
