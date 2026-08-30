@@ -19,6 +19,51 @@
     return Number.isNaN(d.getTime()) ? null : d;
   }
 
+  // يستخرج العدد فقط من الرسائل التي تحتوي على:
+  // سيناريوهات
+  // العدد:[ 20 ]
+  // يستخرج العدد من رسائل "سيناريوهات" أو "تقارير".
+  // أمثلة:
+  // سيناريوهات
+  // العدد:[ 20 ]
+  //
+  // تقارير
+  // العدد:[16]
+  // يرجع نوع الرسالة والعدد المستخرج.
+  // يدعم:
+  // سيناريوهات -> العدد:[20]
+  // تقارير     -> العدد:[16]
+  function extractReportScenario(content){
+    const text = String(content ?? "")
+      .replace(/\u001b\[[0-9;]*m/g, "")
+      .replace(/\\u001b\[[0-9;]*m/g, "")
+      .replace(/\\x1b\[[0-9;]*m/g, "");
+
+    let type = null;
+
+    if (text.includes("سيناريوهات")) {
+      type = "scenario";
+    } else if (text.includes("تقارير")) {
+      type = "report";
+    }
+
+    if (!type) {
+      return null;
+    }
+
+    const match = text.match(
+      /العدد\s*:\s*\[\s*(\d+(?:[.,]\d+)?)\s*\]/u
+    );
+
+    if (!match) {
+      return null;
+    }
+
+    return {
+      type,
+      value: Number(match[1].replace(",", "."))
+    };
+  }
   function extractChannelId(input){
     const v = String(input ?? "").trim();
     if (!v) return "";
@@ -60,7 +105,8 @@
             globalName: node.author?.global_name || "",
             channelId,
             timestamp,
-            content: typeof node.content === "string" ? node.content : ""
+            content: typeof node.content === "string" ? node.content : "",
+            reportScenario: extractReportScenario(node.content)
           });
         }
         return;
@@ -158,6 +204,25 @@
           userId: rows.find(x => x.userId)?.userId || "",
           globalName: rows.find(x => x.globalName)?.globalName || "",
           count: rows.length,
+          scenarioTotal: rows.reduce(
+            (sum, row) =>
+              sum + (
+                row.reportScenario?.type === "scenario"
+                  ? row.reportScenario.value
+                  : 0
+              ),
+            0
+          ),
+
+          reportTotal: rows.reduce(
+            (sum, row) =>
+              sum + (
+                row.reportScenario?.type === "report"
+                  ? row.reportScenario.value
+                  : 0
+              ),
+            0
+          ),
           first: rows[0]?.timestamp || "",
           last: rows.at(-1)?.timestamp || "",
           messages: rows
@@ -189,6 +254,16 @@
     const total = results.length;
     const totalMessages = results.reduce((n,r) => n + r.count, 0);
 
+    const scenarioTotal = results.reduce(
+      (n, r) => n + r.scenarioTotal,
+      0
+    );
+
+    const reportTotal = results.reduce(
+      (n, r) => n + r.reportTotal,
+      0
+    );
+
     $("summaryMeta").textContent =
       `القناة: ${channelId} • تم البحث في جميع البيانات المحمّلة`;
 
@@ -196,6 +271,8 @@
       <div class="box"><b>${total}</b><span>عدد المستخدمين</span></div>
       <div class="box"><b>${sent}</b><span>أرسلوا</span></div>
       <div class="box"><b>${totalMessages}</b><span>إجمالي الرسائل</span></div>
+      <div class="box"><b>${scenarioTotal}</b><span>مجموع السيناريوهات</span></div>
+      <div class="box"><b>${reportTotal}</b><span>مجموع التقارير</span></div>
     `;
 
     $("resultsBody").innerHTML = results.map(r => `
@@ -205,6 +282,7 @@
         <td>${esc(r.globalName || "—")}</td>
         <td class="${r.count ? "ok" : "bad"}">${r.count ? "✅ أرسل" : "❌ لم يرسل"}</td>
         <td>${r.count}</td>
+        <td><strong>${r.scenarioTotal ?? 0}</strong></td>
         <td>${formatDate(r.first)}</td>
         <td>${formatDate(r.last)}</td>
       </tr>
@@ -217,28 +295,75 @@
       <article class="message">
         <div class="message-meta">${esc(m.userId)} • ${esc(formatDate(m.timestamp))}</div>
         <div class="message-text">${esc(m.content || "(بدون نص)")}</div>
+        ${
+          m.reportScenario
+            ? `<div class="message-meta">🔢 ${
+                m.reportScenario.type === "scenario"
+                  ? "السيناريوهات"
+                  : "التقارير"
+              }: ${m.reportScenario.value}</div>`
+            : ""
+        }
       </article>
     `).join("");
   }
 
-  $("downloadCsv").addEventListener("click", () => {
-    if (!lastResults.length) return;
+  $("downloadCsv")?.addEventListener(
+    "click",
+    () => {
 
-    const text = lastResults.map(r =>
-      `@${r.username || ""}\nعدد الملفات المرسلة\n${r.count}\n`
-    ).join("\n");
+      if (!lastResults.length) {
+        return;
+      }
 
-    const blob = new Blob(["\ufeff" + text], {
-      type: "text/plain;charset=utf-8"
-    });
+      // تصدير TXT:
+      // @Username
+      // السيناريوهات: 20
+      // التقارير: 16
+      const lines = [];
 
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "discord-check-results.txt";
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
+      lastResults.forEach(r => {
 
+        const username =
+          String(r.username || "")
+            .trim()
+            .replace(/^@+/, "");
+
+        lines.push(`@${username}`);
+        lines.push(`السيناريوهات: ${r.scenarioTotal ?? 0}`);
+        lines.push(`التقارير: ${r.reportTotal ?? 0}`);
+        lines.push("");
+
+      });
+
+      const txt =
+        lines.join("\n").trim() + "\n";
+
+      const blob =
+        new Blob(
+          ["\ufeff" + txt],
+          {
+            type: "text/plain;charset=utf-8"
+          }
+        );
+
+      const a =
+        document.createElement("a");
+
+      const url =
+        URL.createObjectURL(blob);
+
+      a.href = url;
+      a.download = "discord-check-results.txt";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+  );
+
+  // =========================
+  // مسح
+  // =========================
   $("clear").addEventListener("click", () => {
     loadedRows = [];
     lastResults = [];

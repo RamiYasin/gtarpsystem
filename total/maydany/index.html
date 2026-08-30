@@ -12,7 +12,7 @@
     <div>
       <div class="eyebrow">DEV BY KARA 6262</div>
       <h1>نظام جرد تفاعل الشؤون الداخلية لحرس الحدود</h1>
-      <p>يقرأ استجابة JSON المحفوظة من نتائج Discord ويبحث عن رسائل مستخدم خلال فترة محددة.</p>
+      <p>يقرأ استجابة JSON من Discord ويبحث بواسطة Username ويحسب مجموع السيناريوهات والتقارير لكل شخص.</p>
     </div>
     <div class="privacy">🔒 المعالجة محليًا داخل المتصفح</div>
   </header>
@@ -70,7 +70,7 @@
         <h2>النتيجة</h2>
         <p id="summaryMeta"></p>
       </div>
-      <button id="downloadCsv" type="button">⬇ تصدير القائمة</button>
+      <button id="downloadCsv" type="button">⬇ تصدير TXT</button>
     </div>
 
     <div id="summaryBoxes" class="boxes"></div>
@@ -83,6 +83,8 @@
             <th>Global Name</th>
             <th>النتيجة</th>
             <th>عدد الرسائل</th>
+            <th>السيناريوهات</th>
+            <th>التقارير</th><th>مجموع التقارير والسيناريوهات</th>
             <th>أول رسالة</th>
             <th>آخر رسالة</th>
           </tr>
